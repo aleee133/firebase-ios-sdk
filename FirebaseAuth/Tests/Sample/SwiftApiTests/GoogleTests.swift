@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import Foundation
 import FirebaseAuth
+import Foundation
 import GTMSessionFetcher
 import XCTest
 
@@ -37,8 +37,8 @@ class GoogleTests: TestsBase {
     waitForExpectations(timeout: TestsBase.kExpectationsTimeout)
   }
 
-  #if compiler(>=5.5) && canImport(_Concurrency)
-    @available(iOS 15, tvOS 15, macOS 12, watchOS 8, *)
+  #if compiler(>=5.5.2) && canImport(_Concurrency)
+    @available(iOS 13, tvOS 13, macOS 10.15, macCatalyst 13, watchOS 7, *)
     func testSignInWithGoogleAsync() async throws {
       let auth = Auth.auth()
       let userInfoDict = try await getGoogleAccessTokenAsync()
@@ -50,11 +50,11 @@ class GoogleTests: TestsBase {
     }
   #endif
 
-  /// ** Sends http request to Google OAuth2 token server to use refresh token to exchange for Google
-  // * access token. Returns a dictionary that constains "access_token", "token_type", "expires_in" and
-  // * sometimes the "id_token". (The id_token is not guaranteed to be returned during a refresh
-  // * exchange; see https://openid.net/specs/openid-connect-core-1_0.html#RefreshTokenResponse)
-  // */
+  /// Sends http request to Google OAuth2 token server to use refresh token to exchange for Google
+  /// access token.
+  /// Returns a dictionary that constains "access_token", "token_type", "expires_in" and sometimes
+  /// the "id_token". (The id_token is not guaranteed to be returned during a refresh exchange; see
+  /// https://openid.net/specs/openid-connect-core-1_0.html#RefreshTokenResponse)
   func getGoogleAccessToken() -> [String: Any] {
     var returnValue: [String: Any] = [:]
     let googleOauth2TokenServerUrl = "https://www.googleapis.com/oauth2/v4/token"
@@ -84,13 +84,13 @@ class GoogleTests: TestsBase {
     return returnValue
   }
 
-  #if compiler(>=5.5) && canImport(_Concurrency)
-    @available(iOS 15, tvOS 15, macOS 12, watchOS 8, *)
-    /// ** Sends http request to Google OAuth2 token server to use refresh token to exchange for Google
-    // * access token. Returns a dictionary that constains "access_token", "token_type", "expires_in" and
-    // * sometimes the "id_token". (The id_token is not guaranteed to be returned during a refresh
-    // * exchange; see https://openid.net/specs/openid-connect-core-1_0.html#RefreshTokenResponse)
-    // */
+  #if compiler(>=5.5.2) && canImport(_Concurrency)
+    @available(iOS 13, tvOS 13, macOS 10.15, macCatalyst 13, watchOS 7, *)
+    /// Sends http request to Google OAuth2 token server to use refresh token to exchange for Google
+    /// access token.
+    /// Returns a dictionary that constains "access_token", "token_type", "expires_in" and sometimes
+    /// the "id_token". (The id_token is not guaranteed to be returned during a refresh exchange;
+    /// see https://openid.net/specs/openid-connect-core-1_0.html#RefreshTokenResponse)
     func getGoogleAccessTokenAsync() async throws -> [String: Any] {
       let googleOauth2TokenServerUrl = "https://www.googleapis.com/oauth2/v4/token"
       let bodyString = "client_id=\(Credentials.kGoogleClientID)&grant_type=refresh_token" +

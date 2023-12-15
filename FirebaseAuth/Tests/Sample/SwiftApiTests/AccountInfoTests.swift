@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import XCTest
 import FirebaseAuth
+import XCTest
 
 class AccountInfoTests: TestsBase {
   /** The testing email address for testCreateAccountWithEmailAndPassword. */
@@ -75,8 +75,8 @@ class AccountInfoTests: TestsBase {
     waitForExpectations(timeout: TestsBase.kExpectationsTimeout)
   }
 
-  #if compiler(>=5.5) && canImport(_Concurrency)
-    @available(iOS 15, tvOS 15, macOS 12, watchOS 8, *)
+  #if compiler(>=5.5.2) && canImport(_Concurrency)
+    @available(iOS 13, tvOS 13, macOS 10.15, watchOS 7, *)
     func testUpdatingUsersEmailAsync() async throws {
       let auth = Auth.auth()
       do {

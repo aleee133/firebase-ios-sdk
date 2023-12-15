@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name                    = 'FirebaseSharedSwift'
-  s.version                 = '8.11.0'
+  s.version                 = '10.20.0'
   s.summary                 = 'Shared Swift Extensions for Firebase'
 
   s.description      = <<-DESC
@@ -10,7 +10,7 @@ Firebase products. FirebaseSharedSwift is not supported for non-Firebase usage.
 
 
   s.homepage                = 'https://developers.google.com/'
-  s.license                 = { :type => 'Apache', :file => 'FirebaseSharedSwift/LICENSE' }
+  s.license                 = { :type => 'Apache-2.0', :file => 'FirebaseSharedSwift/LICENSE' }
   s.authors                 = 'Google, Inc.'
 
   s.source                  = {
@@ -20,9 +20,9 @@ Firebase products. FirebaseSharedSwift is not supported for non-Firebase usage.
 
   s.swift_version           = '5.3'
 
-  ios_deployment_target = '10.0'
-  osx_deployment_target = '10.12'
-  tvos_deployment_target = '10.0'
+  ios_deployment_target = '11.0'
+  osx_deployment_target = '10.13'
+  tvos_deployment_target = '12.0'
   watchos_deployment_target = '6.0'
 
   s.ios.deployment_target = ios_deployment_target

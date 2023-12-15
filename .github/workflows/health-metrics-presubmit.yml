@@ -10,6 +10,11 @@ on:
 env:
   METRICS_SERVICE_SECRET: ${{ secrets.GHASecretsGPGPassphrase1 }}
 
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+    cancel-in-progress: true
+
 jobs:
   # Check all the modified SDKs, the flags will be true if changed files match patterns in the file
   # scripts/health_metrics/file_patterns.json
@@ -37,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: check files
@@ -54,12 +59,12 @@ jobs:
     # Prevent the job from being triggered in fork.
     # always() will trigger this job when `needs` are skipped in a `merge` pull_request event.
     if: always() && github.event.pull_request.head.repo.full_name == github.repository && ((github.event.action != 'closed' &&  github.event.pull_request.base.ref == 'master') || github.event.pull_request.merged)
-    runs-on: macos-11
+    runs-on: macos-12
     strategy:
       matrix:
         target: [iOS]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Access to Metrics Service
       run: |
         # Install gcloud sdk
@@ -101,15 +106,16 @@ jobs:
     needs: check
     # Don't run on private repo unless it is a PR.
     if: always() && github.repository == 'Firebase/firebase-ios-sdk' && (needs.check.outputs.abtesting_run_job == 'true'|| github.event.pull_request.merged)
-    runs-on: macos-11
+    runs-on: macos-12
     strategy:
       matrix:
         target: [iOS]
     steps:
-    - uses: actions/checkout@v2
-    - uses: mikehardy/buildcache-action@50738c6c77de7f34e66b870e4f8ede333b69d077
+    - uses: actions/checkout@v4
+    - uses: mikehardy/buildcache-action@c87cea0ccd718971d6cc39e672c4f26815b6c126
       with:
         cache_key: ${{ matrix.os }}
+    - uses: ruby/setup-ruby@v1
     - name: Setup Bundler
       run: scripts/setup_bundler.sh
     - name: Build and test
@@ -123,12 +129,13 @@ jobs:
     needs: check
     # Don't run on private repo unless it is a PR.
     if: always() && github.repository == 'Firebase/firebase-ios-sdk' && (needs.check.outputs.auth_run_job == 'true'|| github.event.pull_request.merged)
-    runs-on: macos-11
+    runs-on: macos-12
     strategy:
       matrix:
         target: [iOS]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
+    - uses: ruby/setup-ruby@v1
     - name: Setup Bundler
       run: scripts/setup_bundler.sh
     - name: Build and test
@@ -142,15 +149,16 @@ jobs:
     needs: check
     # Don't run on private repo unless it is a PR.
     if: always() && github.repository == 'Firebase/firebase-ios-sdk' && (needs.check.outputs.database_run_job == 'true' || github.event.pull_request.merged)
-    runs-on: macos-11
+    runs-on: macos-12
     strategy:
       matrix:
         target: [iOS]
     steps:
-    - uses: actions/checkout@v2
-    - uses: mikehardy/buildcache-action@50738c6c77de7f34e66b870e4f8ede333b69d077
+    - uses: actions/checkout@v4
+    - uses: mikehardy/buildcache-action@c87cea0ccd718971d6cc39e672c4f26815b6c126
       with:
         cache_key: ${{ matrix.os }}
+    - uses: ruby/setup-ruby@v1
     - name: Setup Bundler
       run: scripts/setup_bundler.sh
     - name: Build and test
@@ -164,15 +172,16 @@ jobs:
     needs: check
     # Don't run on private repo unless it is a PR.
     if: always() && github.repository == 'Firebase/firebase-ios-sdk' && (needs.check.outputs.dynamiclinks_run_job == 'true'|| github.event.pull_request.merged)
-    runs-on: macos-11
+    runs-on: macos-12
     strategy:
       matrix:
         target: [iOS]
     steps:
-    - uses: actions/checkout@v2
-    - uses: mikehardy/buildcache-action@50738c6c77de7f34e66b870e4f8ede333b69d077
+    - uses: actions/checkout@v4
+    - uses: mikehardy/buildcache-action@c87cea0ccd718971d6cc39e672c4f26815b6c126
       with:
         cache_key: ${{ matrix.os }}
+    - uses: ruby/setup-ruby@v1
     - name: Setup Bundler
       run: scripts/setup_bundler.sh
     - name: Build and test
@@ -187,19 +196,22 @@ jobs:
     # Don't run on private repo unless it is a PR.
     # Disable Firestore for now since Firestore currently does not have unit tests in podspecs.
     if: always() && github.repository == 'Firebase/firebase-ios-sdk' && (needs.check.outputs.firestore_run_job == 'true'|| github.event.pull_request.merged)
-    runs-on: macos-11
+    runs-on: macos-12
     strategy:
       matrix:
         target: [iOS]
     steps:
-    - uses: actions/checkout@v2
-    - uses: mikehardy/buildcache-action@50738c6c77de7f34e66b870e4f8ede333b69d077
+    - uses: actions/checkout@v4
+    - uses: mikehardy/buildcache-action@c87cea0ccd718971d6cc39e672c4f26815b6c126
       with:
         cache_key: ${{ matrix.os }}
+    - uses: ruby/setup-ruby@v1
     - name: Setup Bundler
       run: scripts/setup_bundler.sh
     - name: Build and test
-      run: ./scripts/health_metrics/pod_test_code_coverage_report.sh --sdk=FirebaseFirestore --platform=${{ matrix.target }}
+      run: |
+        export EXPERIMENTAL_MODE=true
+        ./scripts/health_metrics/pod_test_code_coverage_report.sh --sdk=FirebaseFirestore --platform=${{ matrix.target }}
     - uses: actions/upload-artifact@v2
       with:
         name: codecoverage
@@ -209,15 +221,16 @@ jobs:
     needs: check
     # Don't run on private repo unless it is a PR.
     if: always() && github.repository == 'Firebase/firebase-ios-sdk' && (needs.check.outputs.functions_run_job == 'true'|| github.event.pull_request.merged)
-    runs-on: macos-11
+    runs-on: macos-12
     strategy:
       matrix:
         target: [iOS]
     steps:
-    - uses: actions/checkout@v2
-    - uses: mikehardy/buildcache-action@50738c6c77de7f34e66b870e4f8ede333b69d077
+    - uses: actions/checkout@v4
+    - uses: mikehardy/buildcache-action@c87cea0ccd718971d6cc39e672c4f26815b6c126
       with:
         cache_key: ${{ matrix.os }}
+    - uses: ruby/setup-ruby@v1
     - name: Setup Bundler
       run: scripts/setup_bundler.sh
     - name: Build and test
@@ -231,15 +244,16 @@ jobs:
     needs: check
     # Don't run on private repo unless it is a PR.
     if: always() && github.repository == 'Firebase/firebase-ios-sdk' && (needs.check.outputs.inappmessaging_run_job == 'true'|| github.event.pull_request.merged)
-    runs-on: macos-11
+    runs-on: macos-12
     strategy:
       matrix:
         target: [iOS]
     steps:
-    - uses: actions/checkout@v2
-    - uses: mikehardy/buildcache-action@50738c6c77de7f34e66b870e4f8ede333b69d077
+    - uses: actions/checkout@v4
+    - uses: mikehardy/buildcache-action@c87cea0ccd718971d6cc39e672c4f26815b6c126
       with:
         cache_key: ${{ matrix.os }}
+    - uses: ruby/setup-ruby@v1
     - name: Setup Bundler
       run: scripts/setup_bundler.sh
     - name: Build and test
@@ -253,15 +267,16 @@ jobs:
     needs: check
     # Don't run on private repo unless it is a PR.
     if: always() && github.repository == 'Firebase/firebase-ios-sdk' && (needs.check.outputs.messaging_run_job == 'true'|| github.event.pull_request.merged)
-    runs-on: macos-11
+    runs-on: macos-12
     strategy:
       matrix:
         target: [iOS]
     steps:
-    - uses: actions/checkout@v2
-    - uses: mikehardy/buildcache-action@50738c6c77de7f34e66b870e4f8ede333b69d077
+    - uses: actions/checkout@v4
+    - uses: mikehardy/buildcache-action@c87cea0ccd718971d6cc39e672c4f26815b6c126
       with:
         cache_key: ${{ matrix.os }}
+    - uses: ruby/setup-ruby@v1
     - name: Setup Bundler
       run: scripts/setup_bundler.sh
     - name: Build and test
@@ -275,17 +290,20 @@ jobs:
     needs: check
     # Don't run on private repo unless it is a PR.
     if: always() && github.repository == 'Firebase/firebase-ios-sdk' && (needs.check.outputs.performance_run_job == 'true'|| github.event.pull_request.merged)
-    runs-on: macos-11
+    runs-on: macos-12
     strategy:
       matrix:
         target: [iOS]
     steps:
-    - uses: actions/checkout@v2
-    - uses: mikehardy/buildcache-action@50738c6c77de7f34e66b870e4f8ede333b69d077
+    - uses: actions/checkout@v4
+    - uses: mikehardy/buildcache-action@c87cea0ccd718971d6cc39e672c4f26815b6c126
       with:
         cache_key: ${{ matrix.os }}
+    - uses: ruby/setup-ruby@v1
     - name: Setup Bundler
       run: scripts/setup_bundler.sh
+    - name: Install xcpretty
+      run: gem install xcpretty
     - name: Build and test
       run: ./scripts/health_metrics/pod_test_code_coverage_report.sh --sdk=FirebasePerformance --platform=${{ matrix.target }}
     - uses: actions/upload-artifact@v2
@@ -297,15 +315,16 @@ jobs:
     needs: check
     # Don't run on private repo unless it is a PR.
     if: always() && github.repository == 'Firebase/firebase-ios-sdk' && (needs.check.outputs.remoteconfig_run_job == 'true'|| github.event.pull_request.merged)
-    runs-on: macos-11
+    runs-on: macos-12
     strategy:
       matrix:
         target: [iOS]
     steps:
-    - uses: actions/checkout@v2
-    - uses: mikehardy/buildcache-action@50738c6c77de7f34e66b870e4f8ede333b69d077
+    - uses: actions/checkout@v4
+    - uses: mikehardy/buildcache-action@c87cea0ccd718971d6cc39e672c4f26815b6c126
       with:
         cache_key: ${{ matrix.os }}
+    - uses: ruby/setup-ruby@v1
     - name: Setup Bundler
       run: scripts/setup_bundler.sh
     - name: Build and test
@@ -319,15 +338,16 @@ jobs:
     needs: check
     # Don't run on private repo unless it is a PR.
     if: always() && github.repository == 'Firebase/firebase-ios-sdk' && (needs.check.outputs.storage_run_job == 'true'|| github.event.pull_request.merged)
-    runs-on: macos-11
+    runs-on: macos-12
     strategy:
       matrix:
         target: [iOS]
     steps:
-    - uses: actions/checkout@v2
-    - uses: mikehardy/buildcache-action@50738c6c77de7f34e66b870e4f8ede333b69d077
+    - uses: actions/checkout@v4
+    - uses: mikehardy/buildcache-action@c87cea0ccd718971d6cc39e672c4f26815b6c126
       with:
         cache_key: ${{ matrix.os }}
+    - uses: ruby/setup-ruby@v1
     - name: Setup Bundler
       run: scripts/setup_bundler.sh
     - name: Build and test
@@ -340,10 +360,10 @@ jobs:
   create_report:
     needs: [check, pod-lib-lint-abtesting, pod-lib-lint-auth, pod-lib-lint-database, pod-lib-lint-dynamiclinks, pod-lib-lint-firestore, pod-lib-lint-functions, pod-lib-lint-inappmessaging, pod-lib-lint-messaging, pod-lib-lint-performance, pod-lib-lint-remoteconfig, pod-lib-lint-storage]
     if: always()
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Access to Metrics Service

@@ -10,7 +10,7 @@
   },
   {
     "sdk": "analytics",
-    "podspecs": ["FirebaseAnalytics.podspec.json", "FirebaseAnalyticsSwift.podspec", "GoogleAppMeasurement.podspec.json"],
+    "podspecs": ["FirebaseAnalytics.podspec", "FirebaseAnalyticsSwift.podspec", "GoogleAppMeasurement.podspec"],
     "filePatterns": [
       "^FirebaseAnalytics.*",
       "^GoogleAppMeasurement.*"
@@ -36,7 +36,7 @@
     "podspecs": ["FirebaseAuth.podspec"],
     "filePatterns": [
       "^FirebaseAuth.*",
-      "Interop/Auth/Public/[^/]+\\.h",
+      "FirebaseAuth/Interop/[^/]+\\.h",
       "\\.github/workflows/auth\\.yml"
     ]
   },
@@ -45,17 +45,7 @@
     "podspecs": ["FirebaseCore.podspec"],
     "filePatterns": [
       "^FirebaseCore.*",
-      "FirebaseCore.podspec",
-      "Interop/CoreDiagnostics/Public/[^/]+\\.h"
-    ]
-  },
-  {
-    "sdk": "core-diagnostics",
-    "podspecs": ["FirebaseCoreDiagnostics.podspec"],
-    "filePatterns": [
-      "Firebase/CoreDiagnostics/.*",
-      "Example/CoreDiagnostics/.*",
-      "Interop/CoreDiagnostics/Public/[^/]+\\.h"
+      "FirebaseCore.podspec"
     ]
   },
   {
@@ -73,7 +63,7 @@
       "^FirebaseDatabase.*",
       "\\.github/workflows/database\\.yml",
       "Example/Database/",
-      "Interop/Auth/Public/[^/]+\\.h"
+      "FirebaseAuth/Interop/[^/]+\\.h"
     ]
   },
   {
@@ -90,7 +80,6 @@
     "podspecs": ["Firebase.podspec"],
     "filePatterns": [
       ".*.podspec",
-      ".*.podspec.json",
       "CoreOnly/.*"
     ]
   },
@@ -99,9 +88,9 @@
     "podspecs": ["FirebaseFirestore.podspec", "FirebaseFirestoreSwift.podspec"],
     "filePatterns": [
       "^Firestore/.*",
-      "FirebaseAppCheck/Sources/Interop/[^/]+\\.h",
-      "Interop/Auth/Public/[^/]+\\.h",
-      "FirebaseCore/Sources/Private",
+      "FirebaseAppCheck/Interop/[^/]+\\.h",
+      "FirebaseAuth/Interop/[^/]+\\.h",
+      "FirebaseCore/Internal",
       "FirebaseCore/Sources/Public",
       "FirebaseFirestore\\.podspec",
       "CMakeLists\\.txt",
@@ -111,12 +100,12 @@
   },
   {
     "sdk": "functions",
-    "podspecs": ["FirebaseFunctions.podspec", "FirebaseFunctionsSwift.podspec"],
+    "podspecs": ["FirebaseFunctions.podspec"],
     "filePatterns": [
       "^Functions.*",
       "\\.github/workflows/functions\\.yml",
-      "Interop/Auth/Public/.*\\.h",
-      "FirebaseMessaging/Sources/Interop/[^/]+\\.h"
+      "FirebaseAuth/Interop/.*\\.h",
+      "FirebaseMessaging/Interop/[^/]+\\.h"
     ]
   },
   {
@@ -188,10 +177,10 @@
   },
   {
     "sdk": "storage",
-    "podspecs": ["FirebaseStorage.podspec", "FirebaseStorageSwift.podspec"],
+    "podspecs": ["FirebaseStorage.podspec"],
     "filePatterns": [
       "^FirebaseStorage.*",
-      "Interop/Auth/Public/[^/]+\\.h",
+      "FirebaseAuth/Interop/[^/]+\\.h",
       "\\.github/workflows/storage\\.yml"
     ]
   }

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'FirebaseRemoteConfig'
-  s.version          = '8.11.0'
+  s.version          = '10.20.0'
   s.summary          = 'Firebase Remote Config'
 
   s.description      = <<-DESC
@@ -10,7 +10,7 @@ app update.
                        DESC
 
   s.homepage         = 'https://firebase.google.com'
-  s.license          = { :type => 'Apache', :file => 'LICENSE' }
+  s.license          = { :type => 'Apache-2.0', :file => 'LICENSE' }
   s.authors          = 'Google, Inc.'
 
   s.source           = {
@@ -18,10 +18,12 @@ app update.
     :tag => 'CocoaPods-' + s.version.to_s
   }
   s.social_media_url = 'https://twitter.com/Firebase'
-  ios_deployment_target = '10.0'
-  osx_deployment_target = '10.12'
-  tvos_deployment_target = '10.0'
+  ios_deployment_target = '11.0'
+  osx_deployment_target = '10.13'
+  tvos_deployment_target = '12.0'
   watchos_deployment_target = '6.0'
+
+  s.swift_version = '5.3'
 
   s.ios.deployment_target = ios_deployment_target
   s.osx.deployment_target = osx_deployment_target
@@ -36,19 +38,21 @@ app update.
     base_dir + '**/*.[mh]',
     'Interop/Analytics/Public/*.h',
     'FirebaseABTesting/Sources/Private/*.h',
-    'FirebaseCore/Sources/Private/*.h',
+    'FirebaseCore/Extension/*.h',
     'FirebaseInstallations/Source/Library/Private/*.h',
+    'FirebaseRemoteConfig/Swift/**/*.swift',
   ]
   s.public_header_files = base_dir + 'Public/FirebaseRemoteConfig/*.h'
   s.pod_target_xcconfig = {
     'GCC_C_LANGUAGE_STANDARD' => 'c99',
     'HEADER_SEARCH_PATHS' => '"${PODS_TARGET_SRCROOT}"'
   }
-  s.dependency 'FirebaseABTesting', '~> 8.0'
-  s.dependency 'FirebaseCore', '~> 8.0'
-  s.dependency 'FirebaseInstallations', '~> 8.0'
-  s.dependency 'GoogleUtilities/Environment', '~> 7.7'
-  s.dependency 'GoogleUtilities/NSData+zlib', '~> 7.7'
+  s.dependency 'FirebaseABTesting', '~> 10.0'
+  s.dependency 'FirebaseSharedSwift', '~> 10.0'
+  s.dependency 'FirebaseCore', '~> 10.0'
+  s.dependency 'FirebaseInstallations', '~> 10.0'
+  s.dependency 'GoogleUtilities/Environment', '~> 7.8'
+  s.dependency 'GoogleUtilities/NSData+zlib', '~> 7.8'
 
   s.test_spec 'unit' do |unit_tests|
     unit_tests.scheme = { :code_coverage => true }
